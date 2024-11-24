@@ -1,0 +1,7 @@
+[database]
+url = "postgres://user:password@localhost/dbname"
+
+[log]
+debug = true
+debug_sql = false
+log_root = "/var/log/myapp"
