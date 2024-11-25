@@ -1,7 +1,9 @@
+use crate::GLOBAL_MATCHES;
 use anyhow::Result;
 use inotify::EventMask;
 use inotify::{Inotify, WatchMask};
 use log::info;
+
 pub fn wait_until_update(path: &std::path::Path) -> Result<()> {
     let mut inotify = Inotify::init()?;
     info!("Inotify instance initialized");
@@ -12,21 +14,13 @@ pub fn wait_until_update(path: &std::path::Path) -> Result<()> {
         .add(path, WatchMask::MODIFY | WatchMask::CLOSE_WRITE)?;
     info!("Watch added for {:?}", path);
 
-    loop {
-        let mut buffer = [0; 1024];
-        match inotify.read_events_blocking(&mut buffer) {
-            Ok(events) => {
-                for event in events {
-                    if event.mask.contains(EventMask::MODIFY) {
-                        info!("File has been modified: {:?}", event.name);
-                        println!("666");
-                    }
-                }
-            }
-            Err(e) => {
-                info!("Error reading events: {:?}", e);
-                break;
-            }
+    let mut buffer = [0; 1024];
+    {
+        let events = inotify
+            .read_events_blocking(&mut buffer)
+            .expect("Error while reading events");
+        for event in events {
+            info!("Event: {:?}", event);
         }
     }
     Ok(())

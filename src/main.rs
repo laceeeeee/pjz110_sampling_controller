@@ -33,15 +33,28 @@ fn main() -> Result<()> {
         return Ok(());
     }
     print_app_list();
-
-    let handle = thread::spawn(move || {
-        let _ = wait_until_update(Path::new(&profile));
-    });
-    let _ = run(&sampling_rate);
-    // 等待线程结束
-    handle.join().unwrap();
+    thread_start(profile, sampling_rate);
 
     Ok(())
+}
+
+fn thread_start(profile: String, sampling_rate: String) {
+    let full_path = profile.clone();
+    let directory_path = full_path
+        .rsplit_once('/')
+        .map(|(_, dir)| dir.to_string()) // 获取目录部分并转换为 String
+        .unwrap_or(full_path); // 如果没有找到 '/'，返回原始路径
+
+    let file_monitor = thread::spawn(move || {
+        let _ = wait_until_update(Path::new(&profile));
+    });
+    let run_thread = thread::spawn(move || {
+        let _ = run(&sampling_rate);
+    });
+
+    // 等待线程结束
+    file_monitor.join().unwrap();
+    run_thread.join().unwrap();
 }
 fn print_app_list() {
     let global_matches = GLOBAL_MATCHES.lock();
