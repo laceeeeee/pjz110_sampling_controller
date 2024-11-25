@@ -58,8 +58,8 @@ fn run() -> Result<()> {
             thread::sleep(Duration::from_millis(1000));
             continue;
         }
-        global_package= name.clone();
-        println!("上次报名:{}\n当前报名:{}",global_package,name);
+        global_package = name.clone();
+        println!("上次报名:{}\n当前报名:{}", global_package, name);
 
         let global_matches = GLOBAL_MATCHES.lock();
         for match_str in global_matches.iter() {
