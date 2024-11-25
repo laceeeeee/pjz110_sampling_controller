@@ -1,5 +1,4 @@
 use anyhow::Result;
-use log::info;
 use flexi_logger::{DeferredNow, LogSpecification, Logger, Record};
 use std::io::{self, prelude::*};
 pub fn init_log() -> Result<()> {
