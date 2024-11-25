@@ -63,7 +63,7 @@ fn run(rate: &str) -> Result<()> {
         }
         global_package = name.clone();
         let rs = detern(name.clone(), rate);
-        if rs == true {
+        if rs {
             continue;
         }
         println!("检测到日常app: {}", name);
