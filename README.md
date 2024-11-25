@@ -59,7 +59,7 @@ mv ~/ndk_temp/*/* ~/ndk_temp
 export ANDROID_NDK_HOME=$(realpath ~/ndk_temp)
 export ANDROID_NDK_ROOT=$ANDROID_NDK_HOME
 ```
-全部设置完毕后，执行`sh build.sh release` 即可
+全部设置完毕后，执行`python3 ./make.py build --release --nightly` 即可
 
 
 ### 换源
@@ -70,6 +70,7 @@ export RUSTUP_UPDATE_ROOT="https://mirrors.tuna.tsinghua.edu.cn/rustup/rustup"
 ```
 
 - cargo
+创建一个`.cargo`目录，创建文件`config.toml`
 ```toml
 [source.crates-io]
 registry = "https://github.com/rust-lang/crates.io-index"
