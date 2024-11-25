@@ -1,6 +1,5 @@
 mod read;
 mod utils;
-use regex::Regex;
 use std::time::Duration;
 use std::{env, fs, process, thread};
 
