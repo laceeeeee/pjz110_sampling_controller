@@ -17,5 +17,6 @@ MODDIR=${0%/*}
 DIR=/sdcard/Android/fas-rs
 LOG=$MODDIR/log.txt
 
-killall touch_sampling
+killall -15 touch_sampling
+chmod +x ${0%/*}/touch_sampling
 RUST_BACKTRACE=1 nohup $MODDIR/touch_sampling /sdcard/Android/fas-rs/games.toml >$LOG 2>&1 &

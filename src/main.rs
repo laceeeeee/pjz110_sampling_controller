@@ -5,8 +5,8 @@ use std::time::Duration;
 use std::{env, fs, process, thread};
 
 use crate::utils::get_top_app::get_topapp_pid_and_name;
+use crate::utils::run_cmd::set_sampling_rate;
 use anyhow::Result;
-
 use once_cell::sync::Lazy;
 use parking_lot::Mutex;
 static GLOBAL_MATCHES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
@@ -65,9 +65,11 @@ fn run() -> Result<()> {
         for match_str in global_matches.iter() {
             if name == *match_str {
                 println!("此处改变触控采样率");
+                set_sampling_rate("240");
                 continue;
             }
         }
+        set_sampling_rate("120");
         thread::sleep(Duration::from_millis(1000));
     }
 }
