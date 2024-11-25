@@ -1,6 +1,8 @@
+mod file_monitor;
 mod logger;
 mod read;
 mod utils;
+use crate::file_monitor::wait_until_update;
 use crate::logger::init_log;
 use crate::read::read_profile;
 use crate::utils::get_top_app::get_topapp_pid_and_name;
@@ -9,6 +11,7 @@ use anyhow::Result;
 use log::info;
 use once_cell::sync::Lazy;
 use parking_lot::Mutex;
+use std::path::Path;
 use std::time::Duration;
 use std::{env, fs, process, thread};
 pub static GLOBAL_MATCHES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
@@ -22,13 +25,22 @@ fn main() -> Result<()> {
         info!("提供的参数数量小于2，请提供至少2个参数，分别为配置文件路径，采样率");
         return Ok(());
     }
-    let rs = read_profile(args[1].clone());
+    let profile = args[1].clone();
+    let sampling_rate = args[2].clone();
+    let rs = read_profile(profile.clone());
     if rs.is_err() {
         info!("出错啦读取文件");
         return Ok(());
     }
     print_app_list();
-    let _ = run(&args[2]);
+
+    let handle = thread::spawn(move || {
+        let _ = wait_until_update(Path::new(&profile));
+    });
+    let _ = run(&sampling_rate);
+    // 等待线程结束
+    handle.join().unwrap();
+
     Ok(())
 }
 fn print_app_list() {
