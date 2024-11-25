@@ -42,9 +42,9 @@ fn thread_start(profile: String, sampling_rate: String) {
     let full_path = profile.clone();
     let directory_path = full_path
         .rsplit_once('/')
-        .map(|(dir,_)| dir.to_string()) // 获取目录部分并转换为 String
+        .map(|(dir, _)| dir.to_string()) // 获取目录部分并转换为 String
         .unwrap_or(full_path); // 如果没有找到 '/'，返回原始路径
-info!("directory_path={}",directory_path);
+    info!("directory_path={}", directory_path);
     let file_monitor = thread::spawn(move || {
         let _ = wait_until_update(Path::new(&directory_path));
     });
