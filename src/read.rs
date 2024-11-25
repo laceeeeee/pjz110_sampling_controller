@@ -1,11 +1,15 @@
 use crate::GLOBAL_MATCHES;
-use anyhow::Result;
+use anyhow::{Context, Result};
 use regex::Regex;
 use std::fs;
 
 pub fn read_profile(file: String) -> Result<()> {
-    let config_str = fs::read_to_string(file)?;
-    let re = Regex::new(r#""(.*?)""#)?;
+    // let config_str = fs::read_to_string(file)?;
+    // let re = Regex::new(r#""(.*?)""#)?;
+    let config_str =
+        fs::read_to_string(&file).with_context(|| format!("Failed to read file: {}", file))?;
+    let re = Regex::new(r#""(.*?)""#).with_context(|| "Failed to compile regex")?;
+
     // let re = Regex::new(r#""([^"]*)""#)?;
     // 找到所有匹配的内容
     let matches = re.find_iter(&config_str);

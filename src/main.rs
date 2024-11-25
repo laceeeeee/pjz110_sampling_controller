@@ -37,6 +37,21 @@ fn print_app_list() {
     }
 }
 
+fn detern(name: String, rate: &str) -> bool {
+    let global_matches = GLOBAL_MATCHES.lock();
+    for match_str in global_matches.iter() {
+        if name == *match_str {
+            println!(
+                "检测到需要改变触控采样率的app: {}\n 触控采样率:{}",
+                name, rate
+            );
+            set_sampling_rate(rate);
+            return true;
+        }
+    }
+    false
+}
+
 fn run(rate: &str) -> Result<()> {
     let mut global_package = String::new();
     loop {
@@ -47,14 +62,9 @@ fn run(rate: &str) -> Result<()> {
             continue;
         }
         global_package = name.clone();
-
-        let global_matches = GLOBAL_MATCHES.lock();
-        for match_str in global_matches.iter() {
-            if name == *match_str {
-                println!("检测到需要改变触控采样率的app: {}", name);
-                set_sampling_rate(rate);
-                continue;
-            }
+        let rs = detern(name.clone(), rate);
+        if rs == true {
+            continue;
         }
         println!("检测到日常app: {}", name);
         set_sampling_rate("120");
