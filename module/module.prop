@@ -1,0 +1,6 @@
+id=touch_sampling
+name=touch-sampling
+version=v0.0.1
+versionCode=1
+author=reigadegr
+description=Set the touch sampling rate for OnePlus 13.

@@ -16,7 +16,7 @@ fn main() -> Result<()> {
     let self_pid = process::id();
     let _ = fs::write("/dev/cpuset/background/cgroup.procs", self_pid.to_string());
     let args: Vec<String> = env::args().collect();
-    if args.len() < 2 {
+    if args.len() < 3 {
         println!("参数数量小于2，请提供至少一个参数。");
         return Ok(());
     }
@@ -26,7 +26,7 @@ fn main() -> Result<()> {
         return Ok(());
     }
     pt_app();
-    let _ = run();
+    let _ = run(&args[2]);
     Ok(())
 }
 fn pt_app() {
@@ -48,7 +48,7 @@ fn read_file(file: String) -> Result<()> {
     }
     Ok(())
 }
-fn run() -> Result<()> {
+fn run(rate:&str) -> Result<()> {
     let mut global_package = String::new();
     loop {
         let (_, name) = get_topapp_pid_and_name()?;
@@ -63,7 +63,7 @@ fn run() -> Result<()> {
         for match_str in global_matches.iter() {
             if name == *match_str {
                 println!("检测到需要改变触控采样率的app: {}",name);
-                set_sampling_rate("240");
+                set_sampling_rate(rate);
                 continue;
             }
         }
