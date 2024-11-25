@@ -17,7 +17,7 @@ fn main() -> Result<()> {
     let _ = fs::write("/dev/cpuset/background/cgroup.procs", self_pid.to_string());
     let args: Vec<String> = env::args().collect();
     if args.len() < 3 {
-        println!("参数数量小于2，请提供至少一个参数。");
+        println!("提供的参数数量小于2，请提供至少2个参数，分别为配置文件路径，采样率");
         return Ok(());
     }
     let rs = read_file(args[1].clone());
@@ -25,12 +25,13 @@ fn main() -> Result<()> {
         println!("出错啦读取文件");
         return Ok(());
     }
-    pt_app();
+    print_app_list();
     let _ = run(&args[2]);
     Ok(())
 }
-fn pt_app() {
+fn print_app_list() {
     let global_matches = GLOBAL_MATCHES.lock();
+    println!("以下是你在fas-rs的games.toml配置的包名:");
     for match_str in global_matches.iter() {
         println!("{}", match_str);
     }
@@ -48,7 +49,7 @@ fn read_file(file: String) -> Result<()> {
     }
     Ok(())
 }
-fn run(rate:&str) -> Result<()> {
+fn run(rate: &str) -> Result<()> {
     let mut global_package = String::new();
     loop {
         let (_, name) = get_topapp_pid_and_name()?;
@@ -58,16 +59,16 @@ fn run(rate:&str) -> Result<()> {
             continue;
         }
         global_package = name.clone();
-        
+
         let global_matches = GLOBAL_MATCHES.lock();
         for match_str in global_matches.iter() {
             if name == *match_str {
-                println!("检测到需要改变触控采样率的app: {}",name);
+                println!("检测到需要改变触控采样率的app: {}", name);
                 set_sampling_rate(rate);
                 continue;
             }
         }
-        println!("检测到日常app: {}",name);
+        println!("检测到日常app: {}", name);
         set_sampling_rate("120");
         thread::sleep(Duration::from_millis(1000));
     }
