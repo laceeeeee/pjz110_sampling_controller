@@ -26,7 +26,7 @@ fn main() -> Result<()> {
         return Ok(());
     }
     pt_app();
-    run();
+    let _ = run();
     Ok(())
 }
 fn pt_app() {
@@ -51,7 +51,7 @@ fn read_file(file: String) -> Result<()> {
 fn run() -> Result<()> {
     let mut global_package = String::new();
     loop {
-        let (pid, name) = get_topapp_pid_and_name()?;
+        let (_, name) = get_topapp_pid_and_name()?;
 
         if global_package == name {
             println!("相同包名，返回");
