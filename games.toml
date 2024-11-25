@@ -9,7 +9,7 @@ scene_game_list = true
 "com.kurogame.mingchao" = [24, 30, 45, 60]
 "com.tencent.tmgp.speedmobile" = [120,60]
 "com.tencent.tmgp.sgame" = [30, 60, 90, 120]
-
+"bin.mt.plus"=[120,60]
 [powersave]
 margin = 3
 core_temp_thresh = 80000
