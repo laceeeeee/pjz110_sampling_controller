@@ -1,4 +1,5 @@
 use anyhow::Result;
+use log::info;
 use flexi_logger::{DeferredNow, LogSpecification, Logger, Record};
 use std::io::{self, prelude::*};
 pub fn init_log() -> Result<()> {
@@ -9,8 +10,6 @@ pub fn init_log() -> Result<()> {
         .log_to_stdout()
         .format(log_format)
         .start()?;
-
-    // log_metainfo();
     Ok(())
 }
 
@@ -22,18 +21,3 @@ fn log_format(
     let time = now.format("%Y-%m-%d %H:%M:%S");
     write!(write, "[{time}] {}: {}", record.level(), record.args())
 }
-
-// fn log_metainfo() {
-// info!(
-// "fas-rs v{} {}, llvm-{}, rustc-{}, build by {} at {} on {},{},{}",
-// env!("CARGO_PKG_VERSION"),
-// build_type(),
-// env!("VERGEN_RUSTC_LLVM_VERSION"),
-// env!("VERGEN_RUSTC_SEMVER"),
-// env!("VERGEN_SYSINFO_USER"),
-// env!("VERGEN_BUILD_TIMESTAMP"),
-// env!("VERGEN_SYSINFO_NAME"),
-// env!("VERGEN_SYSINFO_OS_VERSION"),
-// env!("VERGEN_RUSTC_HOST_TRIPLE")
-// );
-// }
