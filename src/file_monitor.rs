@@ -12,8 +12,8 @@ pub fn wait_until_update(path: &std::path::Path) -> Result<()> {
         .add(path, WatchMask::MODIFY | WatchMask::CLOSE_WRITE)?;
     info!("Watch added for {:?}", path);
 
-    let mut buffer = [0; 1024];
-    {
+    loop {
+        let mut buffer = [0; 1024];
         let events = inotify
             .read_events_blocking(&mut buffer)
             .expect("Error while reading events");
@@ -21,5 +21,4 @@ pub fn wait_until_update(path: &std::path::Path) -> Result<()> {
             info!("Event: {:?}", event);
         }
     }
-    Ok(())
 }
