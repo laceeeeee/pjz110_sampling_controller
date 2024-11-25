@@ -37,7 +37,7 @@ fn print_app_list() {
     }
 }
 
-fn detern(name: String, rate: &str) -> bool {
+fn judge_list_app(name: String, rate: &str) -> bool {
     let global_matches = GLOBAL_MATCHES.lock();
     for match_str in global_matches.iter() {
         if name == *match_str {
@@ -62,7 +62,7 @@ fn run(rate: &str) -> Result<()> {
             continue;
         }
         global_package = name.clone();
-        let rs = detern(name.clone(), rate);
+        let rs = judge_list_app(name.clone(), rate);
         if rs {
             continue;
         }
