@@ -14,6 +14,7 @@ pub fn read_profile(file: String) -> Result<()> {
     // 找到所有匹配的内容
     let matches = re.find_iter(&config_str);
     let mut global_matches = GLOBAL_MATCHES.lock();
+    global_matches.clear();
     for mat in matches {
         let trimmed_str = mat.as_str().trim_matches('"'); // 去除双引号
         global_matches.push(trimmed_str.to_string());

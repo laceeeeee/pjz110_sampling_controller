@@ -1,7 +1,8 @@
+// use crate::GLOBAL_MATCHES;
+use crate::read::read_profile;
 use anyhow::Result;
 use inotify::{Inotify, WatchMask};
 use log::info;
-
 pub fn wait_until_update(path: &std::path::Path) -> Result<()> {
     let mut inotify = Inotify::init()?;
     info!("Inotify instance initialized");
@@ -14,11 +15,14 @@ pub fn wait_until_update(path: &std::path::Path) -> Result<()> {
 
     loop {
         let mut buffer = [0; 1024];
-        let events = inotify
+        let _ = inotify
             .read_events_blocking(&mut buffer)
             .expect("Error while reading events");
-        for event in events {
-            info!("Event: {:?}", event);
-        }
+        reload_file(path.display().to_string());
     }
+}
+
+fn reload_file(path: String) {
+    let full_path = format!("{}/games.toml", path);
+    let _ = read_profile(full_path);
 }
