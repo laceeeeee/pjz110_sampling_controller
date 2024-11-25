@@ -4,3 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+anyhow = "1.0.93"
+# serde = { version = "1.0", features = ["derive"] }
+# toml = "0.5"
+dumpsys-rs = { git = "https://github.com/reigadegr/dumpsys-rs" }

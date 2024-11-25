@@ -4,5 +4,25 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-serde = { version = "1.0", features = ["derive"] }
-toml = "0.5"
+anyhow = "1.0.93"
+# serde = { version = "1.0", features = ["derive"] }
+# toml = "0.5"
+dumpsys-rs = { git = "https://github.com/reigadegr/dumpsys-rs" }
+regex = "1.11.1"
+
+[profile.dev]
+overflow-checks = false
+strip = true
+debug = 0
+debug-assertions = false
+
+[profile.release]
+overflow-checks = false
+codegen-units = 1
+lto = "fat"
+opt-level = 3
+strip = true
+debug = 0
+debug-assertions = false
+panic = "abort"
+incremental = false
