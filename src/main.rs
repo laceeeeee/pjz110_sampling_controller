@@ -1,18 +1,20 @@
+mod logger;
 mod read;
 mod utils;
-use std::time::Duration;
-use std::{env, fs, process, thread};
-
+use crate::logger::init_log;
 use crate::read::read_profile;
 use crate::utils::get_top_app::get_topapp_pid_and_name;
 use crate::utils::run_cmd::set_sampling_rate;
 use anyhow::Result;
 use once_cell::sync::Lazy;
 use parking_lot::Mutex;
+use std::time::Duration;
+use std::{env, fs, process, thread};
 pub static GLOBAL_MATCHES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
 
 fn main() -> Result<()> {
-    // 从文件中读取TOML内容
+    init_log();
+    log::info!("这是一条 info 级别的日志");
     let self_pid = process::id();
     let _ = fs::write("/dev/cpuset/background/cgroup.procs", self_pid.to_string());
     let args: Vec<String> = env::args().collect();
