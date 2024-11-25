@@ -19,4 +19,4 @@ LOG=$MODDIR/log.txt
 
 killall -15 touch_sampling
 chmod +x ${0%/*}/touch_sampling
-RUST_BACKTRACE=1 nohup $MODDIR/touch_sampling $DIR/games.toml 240 >$LOG 2>&1 &
+RUST_LOG=info RUST_BACKTRACE=1 nohup $MODDIR/touch_sampling $DIR/games.toml 240 >$LOG 2>&1 &
