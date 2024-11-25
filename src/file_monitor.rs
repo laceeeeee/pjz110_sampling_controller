@@ -1,6 +1,4 @@
-use crate::GLOBAL_MATCHES;
 use anyhow::Result;
-use inotify::EventMask;
 use inotify::{Inotify, WatchMask};
 use log::info;
 
