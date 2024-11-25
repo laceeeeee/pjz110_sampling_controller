@@ -1,0 +1,56 @@
+# [target.aarch64-unknown-linux-gnu]
+# linker = "clang"
+# rustflags = ["-C", "link-arg=-fuse-ld=/data/data/com.termux/files/usr/var/lib/proot-distro/installed-rootfs/archlinux/usr/local/bin/mold"]
+
+# [target.aarch64-linux-android]
+# linker = "clang"
+# rustflags = ["-C", "link-arg=-fuse-ld=/usr/local/bin/mold"]
+
+# [build]
+# linker = "clang"
+# rustflags = ["-C", "link-arg=-fuse-ld=/usr/local/bin/mold"]
+
+# /data/data/com.termux/files/usr/var/lib/proot-distro/installed-rootfs/archlinux/usr/local/bin/mold
+# [unstable]
+# bolt = true
+# [build]
+# rustflags = ["-Z", "trim-paths"]
+
+[target.aarch64-unknown-linux-musl]
+rustflags = ["-C", "linker-flavor=gcc", "-C", "link-self-contained=no"]
+# linker = "/data/data/com.termux/files/usr/var/lib/proot-distro/installed-rootfs/archlinux/root/musltest/musl-zcxx"
+
+# $ cat .cargo/config.toml
+# [target."x86_64-unknown-linux-musl"]
+# rustflags = ["-C", "linker-flavor=gcc", "-C", "link-self-contained=no"]
+# linker = "./musl-zcxx"
+
+
+[source.crates-io]
+registry = "https://github.com/rust-lang/crates.io-index"
+
+# 替换成你偏好的镜像源
+replace-with = 'tuna'
+
+# 清华大学
+[source.tuna]
+registry = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git"
+
+# 北京外国语大学
+[source.bfsu]
+registry = "https://mirrors.bfsu.edu.cn/git/crates.io-index.git"
+
+# 中国科学技术大学
+[source.ustc]
+registry = "git://mirrors.ustc.edu.cn/crates.io-index"
+
+# 上海交通大学
+[source.sjtu]
+registry = "https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index"
+
+# rustcc社区
+[source.rustcc]
+registry = "git://crates.rustcc.cn/crates.io-index"
+
+[source.rsproxy]
+registry = "https://rsproxy.cn/crates.io-index"
