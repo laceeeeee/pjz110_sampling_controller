@@ -54,21 +54,20 @@ fn run() -> Result<()> {
         let (_, name) = get_topapp_pid_and_name()?;
 
         if global_package == name {
-            println!("相同包名，返回");
             thread::sleep(Duration::from_millis(1000));
             continue;
         }
         global_package = name.clone();
-        println!("上次报名:{}\n当前报名:{}", global_package, name);
-
+        
         let global_matches = GLOBAL_MATCHES.lock();
         for match_str in global_matches.iter() {
             if name == *match_str {
-                println!("此处改变触控采样率");
+                println!("检测到需要改变触控采样率的app: {}",name);
                 set_sampling_rate("240");
                 continue;
             }
         }
+        println!("检测到日常app: {}",name);
         set_sampling_rate("120");
         thread::sleep(Duration::from_millis(1000));
     }
