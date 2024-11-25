@@ -34,7 +34,7 @@ async fn main() -> Result<()> {
         return Ok(());
     }
     print_app_list();
-    thread_start(profile, sampling_rate).await;
+    let _ = thread_start(profile, sampling_rate).await;
 
     Ok(())
 }
