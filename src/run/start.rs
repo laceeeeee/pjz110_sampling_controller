@@ -1,4 +1,3 @@
-
 use crate::file_monitor::wait_until_update;
 use crate::set_sampling_rate;
 use crate::shared::get_top_app::get_topapp_pid_and_name;

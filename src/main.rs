@@ -7,13 +7,11 @@ use crate::logger::init_log;
 use crate::read::read_profile;
 use crate::run::run_cmd::set_sampling_rate;
 use crate::run::start::thread_start;
-use crate::shared::get_top_app::get_topapp_pid_and_name;
 use anyhow::Result;
 use log::info;
 use once_cell::sync::Lazy;
 use parking_lot::Mutex;
-use std::time::Duration;
-use std::{env, fs, process, thread};
+use std::{env, fs, process};
 pub static GLOBAL_MATCHES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
 
 #[tokio::main]
