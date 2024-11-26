@@ -52,7 +52,7 @@ fn judge_list_app(name: String, rate: &str) -> bool {
     for match_str in global_matches.iter() {
         if name == *match_str {
             info!(
-                "检测到需要改变触控采样率的app: {}\n 触控采样率:{}",
+                "\n检测到需要改变触控采样率的app: {} 触控采样率:{}",
                 name, rate
             );
             set_sampling_rate(rate);

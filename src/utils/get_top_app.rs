@@ -26,6 +26,7 @@ pub fn get_topapp_pid_and_name() -> Result<(String, String)> {
         return Ok((pid, name));
     }
     // 可以选择返回一个错误、默认值或者处理这种情况的其他方式
+    // 息屏时
     Ok(("".to_string(), "".to_string()))
 }
 
