@@ -1,4 +1,4 @@
-use crate::read::read_profile;
+use crate::run::read::read_profile;
 use anyhow::Result;
 use inotify::{Inotify, WatchMask};
 use log::info;

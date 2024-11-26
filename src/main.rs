@@ -1,12 +1,9 @@
-mod file_monitor;
-mod logger;
-mod read;
 mod run;
 mod shared;
-use crate::logger::init_log;
-use crate::read::read_profile;
+use crate::run::read::read_profile;
 use crate::run::run_cmd::set_sampling_rate;
 use crate::run::start::thread_start;
+use crate::shared::logger::init_log;
 use anyhow::Result;
 use log::info;
 use once_cell::sync::Lazy;
@@ -14,11 +11,15 @@ use parking_lot::Mutex;
 use std::{env, fs, process};
 pub static GLOBAL_MATCHES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
 
-#[tokio::main]
-async fn main() -> Result<()> {
+fn init_misc() {
     let _ = init_log();
     let self_pid = process::id();
     let _ = fs::write("/dev/cpuset/background/cgroup.procs", self_pid.to_string());
+}
+
+#[tokio::main]
+async fn main() -> Result<()> {
+    init_misc();
     let args: Vec<String> = env::args().collect();
     if args.len() < 3 {
         info!("提供的参数数量小于2，请提供至少2个参数，分别为配置文件路径，采样率");
