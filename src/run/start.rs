@@ -28,10 +28,7 @@ fn judge_list_app(name: String, rate: &str) -> bool {
     let global_matches = GLOBAL_MATCHES.lock();
     for match_str in global_matches.iter() {
         if name == *match_str {
-            info!(
-                "检测到目标app: {} 触控采样率:{}",
-                name, rate
-            );
+            info!("目标app: {} 触控采样率:{}", name, rate);
             set_sampling_rate(rate);
             return true;
         }
@@ -53,7 +50,7 @@ fn app_run(rate: &str) -> Result<()> {
         if rs {
             continue;
         }
-        info!("检测到日常app: {}", name);
+        info!("日常app: {}", name);
         set_sampling_rate("120");
         thread::sleep(Duration::from_millis(1000));
     }
