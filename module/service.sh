@@ -13,10 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+wait_until_login() {
+    # in case of /data encryption is disabled
+    while [ "$(getprop sys.boot_completed)" != "1" ]; do
+        sleep 1
+    done
+    # we doesn't have the permission to rw "/sdcard" before the user unlocks the screen
+    until [ -d /sdcard/Android ]; do sleep 1; done
+}
+
 MODDIR=${0%/*}
 DIR=/sdcard/Android/fas-rs
 LOG=$MODDIR/log.txt
 
+wait_until_login
 killall -15 touch_sampling
 chmod +x $MODDIR/touch_sampling
 RUST_BACKTRACE=1 nohup $MODDIR/touch_sampling $DIR/games.toml 240 >$LOG 2>&1 &
