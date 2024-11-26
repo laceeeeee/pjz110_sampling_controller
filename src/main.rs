@@ -2,12 +2,12 @@ mod file_monitor;
 mod logger;
 mod read;
 mod run;
-mod utils;
+mod shared;
 use crate::logger::init_log;
 use crate::read::read_profile;
+use crate::run::run_cmd::set_sampling_rate;
 use crate::run::start::thread_start;
-use crate::utils::get_top_app::get_topapp_pid_and_name;
-use crate::utils::run_cmd::set_sampling_rate;
+use crate::shared::get_top_app::get_topapp_pid_and_name;
 use anyhow::Result;
 use log::info;
 use once_cell::sync::Lazy;
@@ -44,40 +44,5 @@ fn print_app_list() {
     info!("以下是你在fas-rs的games.toml配置的包名:");
     for match_str in global_matches.iter() {
         info!("{}", match_str);
-    }
-}
-
-fn judge_list_app(name: String, rate: &str) -> bool {
-    let global_matches = GLOBAL_MATCHES.lock();
-    for match_str in global_matches.iter() {
-        if name == *match_str {
-            info!(
-                "\n检测到需要改变触控采样率的app: {} 触控采样率:{}",
-                name, rate
-            );
-            set_sampling_rate(rate);
-            return true;
-        }
-    }
-    false
-}
-
-fn app_run(rate: &str) -> Result<()> {
-    let mut global_package = String::new();
-    loop {
-        let (_, name) = get_topapp_pid_and_name()?;
-
-        if global_package == name {
-            thread::sleep(Duration::from_millis(1000));
-            continue;
-        }
-        global_package = name.clone();
-        let rs = judge_list_app(name.clone(), rate);
-        if rs {
-            continue;
-        }
-        info!("检测到日常app: {}", name);
-        set_sampling_rate("120");
-        thread::sleep(Duration::from_millis(1000));
     }
 }
