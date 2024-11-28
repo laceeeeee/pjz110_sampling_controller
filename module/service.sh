@@ -17,11 +17,14 @@ MODDIR=${0%/*}
 DIR=/sdcard/Android/fas-rs
 LOG=$MODDIR/log.txt
 
+#进入games.toml中指定的APP设置的采样率
+games_sampling_rate=240
+#日常全局采样率
+default_sampling_rate=120
+
 wait_until_login() {
     # in case of /data encryption is disabled
-    while [ "$(getprop sys.boot_completed)" != "1" ]; do
-        sleep 1
-    done
+    while [ "$(getprop sys.boot_completed)" != "1" ]; do sleep 1; done
     # we doesn't have the permission to rw "/sdcard" before the user unlocks the screen
     until [ -d /sdcard/Android ]; do sleep 1; done
 }
@@ -29,4 +32,4 @@ wait_until_login() {
 wait_until_login
 killall -15 touch_sampling; rm $LOG
 chmod +x ${0%/*}/touch_sampling
-RUST_BACKTRACE=1 nohup $MODDIR/touch_sampling $DIR/games.toml 240 >$LOG 2>&1 &
+RUST_BACKTRACE=1 nohup $MODDIR/touch_sampling $DIR/games.toml $games_sampling_rate $default_sampling_rate >$LOG 2>&1 &

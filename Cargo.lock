@@ -71,7 +71,7 @@ dependencies = [
 [[package]]
 name = "binder_ndk"
 version = "0.2.0"
-source = "git+https://github.com/reigadegr/binder_rs#25ef38484937fe81c500c255533bd01428bc810f"
+source = "git+https://github.com/reigadegr/binder_rs#c20f79e49d7245af41c79f693e96e063637818fb"
 dependencies = [
  "binder_ndk_sys",
  "downcast-rs",
@@ -81,7 +81,7 @@ dependencies = [
 [[package]]
 name = "binder_ndk_sys"
 version = "0.2.0"
-source = "git+https://github.com/reigadegr/binder_rs#25ef38484937fe81c500c255533bd01428bc810f"
+source = "git+https://github.com/reigadegr/binder_rs#c20f79e49d7245af41c79f693e96e063637818fb"
 dependencies = [
  "anyhow",
  "bindgen",
@@ -294,9 +294,9 @@ dependencies = [
 
 [[package]]
 name = "libc"
-version = "0.2.164"
+version = "0.2.166"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "433bfe06b8c75da9b2e3fbea6e5329ff87748f0b144ef75306e674c3f6f7c13f"
+checksum = "c2ccc108bbc0b1331bd061864e7cd823c0cab660bbe6970e66e2c0614decde36"
 
 [[package]]
 name = "libloading"
