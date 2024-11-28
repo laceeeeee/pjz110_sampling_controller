@@ -8,7 +8,6 @@ pub fn wait_until_update(path: &std::path::Path) -> Result<()> {
     // .map(|(dir, _)| dir.to_string()) // 获取目录部分并转换为 String
     // .unwrap_or(profile); // 如果没有找到 '/'，返回原始路径
     let parent_path = path.parent().unwrap();
-    info!("directory_path={:?}", parent_path);
 
     let mut inotify = Inotify::init()?;
     info!("Inotify instance initialized");

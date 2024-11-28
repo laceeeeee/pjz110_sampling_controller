@@ -11,10 +11,6 @@ use parking_lot::Mutex;
 use std::{env, fs, process};
 pub static GLOBAL_MATCHES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
 
-// use mimalloc::MiMalloc;
-// #[global_allocator]
-// static GLOBAL: MiMalloc = MiMalloc;
-
 #[tokio::main]
 async fn main() -> Result<()> {
     init_misc();

@@ -9,7 +9,7 @@ use std::thread;
 use tokio::time::Duration;
 pub async fn thread_start(
     profile: String,
-    sampling_rate: String,
+    games_sampling_rate: String,
     default_sampling_rate: String,
 ) -> Result<()> {
     // 使用 tokio::spawn_blocking 来启动阻塞任务
@@ -18,7 +18,8 @@ pub async fn thread_start(
     });
 
     let run_thread_handle = tokio::spawn(async move {
-        tokio::task::spawn_blocking(move || app_run(&sampling_rate, &default_sampling_rate)).await?
+        tokio::task::spawn_blocking(move || app_run(&games_sampling_rate, &default_sampling_rate))
+            .await?
     });
 
     // 等待两个任务完成
@@ -39,7 +40,7 @@ fn judge_list_app(name: String, rate: &str) -> bool {
     false
 }
 
-fn app_run(rate: &str, default_sampling_rate: &str) -> Result<()> {
+fn app_run(games_sampling_rate: &str, default_sampling_rate: &str) -> Result<()> {
     let mut global_package = String::new();
     loop {
         let (_, name) = get_topapp_pid_and_name()?;
@@ -49,7 +50,7 @@ fn app_run(rate: &str, default_sampling_rate: &str) -> Result<()> {
             continue;
         }
         global_package = name.clone();
-        let rs = judge_list_app(name.clone(), rate);
+        let rs = judge_list_app(name.clone(), games_sampling_rate);
         if rs {
             continue;
         }
