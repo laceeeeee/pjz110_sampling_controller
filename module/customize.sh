@@ -14,3 +14,6 @@
 # limitations under the License.
 
 echo "Hello World!"
+echo "请您确保使用常规方式安装fas-rs"
+echo "修改service.sh以自定义采样率"
+echo "修改完后或者重新执行service.sh即可。当然重启也行"

@@ -22,6 +22,8 @@ games_sampling_rate=240
 #日常全局采样率
 default_sampling_rate=120
 
+#改完后，重新执行本sh生效
+
 wait_until_login() {
     # in case of /data encryption is disabled
     while [ "$(getprop sys.boot_completed)" != "1" ]; do sleep 1; done
