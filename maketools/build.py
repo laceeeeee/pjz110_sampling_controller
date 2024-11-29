@@ -147,7 +147,7 @@ def task(args):
     if verbose:
         cargo.arg("--verbose")
 
-    cargo.rust_flag("-C default-linker-libraries")
+    # cargo.rust_flag("-C default-linker-libraries")
     cargo.build()
 
     if check:
@@ -162,15 +162,15 @@ def task(args):
         bin = bin.joinpath("release")
     else:
         bin = bin.joinpath("debug")
-    bin = bin.joinpath("touch_sampling")
+    bin = bin.joinpath("PJZ110_sampling_controller")
 
-    bin_module = temp_dir.joinpath("touch_sampling")
+    bin_module = temp_dir.joinpath("PJZ110_sampling_controller")
     shutil.copy2(bin, bin_module)
     tools.strip(bin_module)
 
     build_time = datetime.now().strftime("%Y-%m-%d-%Hh%Mm%Ss")
     build_type = "release" if release else "debug"
-    output = Path("output") / f"touch_sampling_{build_type}_{build_time}"
+    output = Path("output") / f"PJZ110_sampling_controller_{build_type}_{build_time}"
 
     with zipfile.ZipFile(
         f"{output}.zip", "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9
@@ -180,4 +180,4 @@ def task(args):
                 filepath = os.path.join(root, file)
                 arcname = os.path.relpath(filepath, temp_dir)
                 zipf.write(filepath, arcname)
-    print("touch_sampling build successfully: {}.zip".format(output))
+    print("PJZ110_sampling_controller build successfully: {}.zip".format(output))

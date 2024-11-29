@@ -107,7 +107,7 @@ class CargoNightly:
         return self
 
     def build(self):
-        command = "RUSTFLAGS='{}' {} {} -- {}".format(
+        command = "{} {} {} -- {}".format(
             self.__rust_flags, self.__cargo, self.__args, self.__extra_args
         )
         print("Rust build:")

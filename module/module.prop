@@ -1,6 +1,6 @@
-id=touch_sampling
-name=touch-sampling
-version=v0.0.2
+id=pjz110_sampling_controller
+name=PJZ110_sampling_controller
+version=v0.0.3
 versionCode=1
 author=Nigger
 description=Set the touch sampling rate for OnePlus 13.
