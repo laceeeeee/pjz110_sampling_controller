@@ -32,6 +32,6 @@ wait_until_login() {
 }
 
 wait_until_login
-killall -15 touch_sampling; rm $LOG
-chmod +x ${0%/*}/touch_sampling
-RUST_BACKTRACE=1 nohup $MODDIR/touch_sampling $DIR/games.toml $games_sampling_rate $default_sampling_rate >$LOG 2>&1 &
+killall -15 PJZ110_sampling_controller; rm $LOG
+chmod +x ${0%/*}/PJZ110_sampling_controller
+RUST_BACKTRACE=1 nohup $MODDIR/PJZ110_sampling_controller $DIR/games.toml $games_sampling_rate $default_sampling_rate >$LOG 2>&1 &
