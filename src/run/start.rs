@@ -13,20 +13,20 @@ pub async fn thread_start(
     default_sampling_rate: String,
 ) -> Result<()> {
     // 启动文件监控任务
-    let file_monitor_handle = tokio::spawn(async move { wait_until_update(Path::new(&profile)) });
+    let file_monitor = tokio::spawn(async move { wait_until_update(Path::new(&profile)) });
 
     // 启动运行线程任务
-    let run_thread_handle =
+    let run_thread =
         tokio::spawn(async move { app_run(&games_sampling_rate, &default_sampling_rate) });
 
     // 等待两个任务完成
-    let _ = file_monitor_handle.await?;
-    let _ = run_thread_handle.await?;
+    let _ = file_monitor.await?;
+    let _ = run_thread.await?;
 
     Ok(())
 }
 
-fn judge_list_app(name: String, rate: &str) -> bool {
+fn judge_list_app(name: &str, rate: &str) -> bool {
     let global_matches = GLOBAL_MATCHES.lock();
     for match_str in global_matches.iter() {
         if name == *match_str {
@@ -48,7 +48,7 @@ fn app_run(games_sampling_rate: &str, default_sampling_rate: &str) -> Result<()>
             continue;
         }
         global_package = name.clone();
-        let rs = judge_list_app(name.clone(), games_sampling_rate);
+        let rs = judge_list_app(&global_package, games_sampling_rate);
         if rs {
             continue;
         }

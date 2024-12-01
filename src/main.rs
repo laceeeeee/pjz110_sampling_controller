@@ -22,7 +22,7 @@ async fn main() -> Result<()> {
     let profile = args[1].clone();
     let games_sampling_rate = args[2].clone();
     let default_sampling_rate = args[3].clone();
-    let rs = read_profile(profile.clone());
+    let rs = read_profile(&profile);
     if rs.is_err() {
         info!("出错啦读取文件");
         return Ok(());

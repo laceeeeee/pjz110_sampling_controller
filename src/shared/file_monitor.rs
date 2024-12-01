@@ -30,5 +30,5 @@ pub fn wait_until_update(path: &std::path::Path) -> Result<()> {
 }
 
 fn reload_file(full_path: &str) {
-    let _ = read_profile(full_path.to_string());
+    let _ = read_profile(full_path);
 }
