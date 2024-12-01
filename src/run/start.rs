@@ -12,19 +12,17 @@ pub async fn thread_start(
     games_sampling_rate: String,
     default_sampling_rate: String,
 ) -> Result<()> {
-    // 使用 tokio::spawn_blocking 来启动阻塞任务
-    let file_monitor_handle = tokio::spawn(async move {
-        tokio::task::spawn_blocking(move || wait_until_update(Path::new(&profile))).await?
-    });
+    // 启动文件监控任务
+    let file_monitor_handle = tokio::spawn(async move { wait_until_update(Path::new(&profile)) });
 
-    let run_thread_handle = tokio::spawn(async move {
-        tokio::task::spawn_blocking(move || app_run(&games_sampling_rate, &default_sampling_rate))
-            .await?
-    });
+    // 启动运行线程任务
+    let run_thread_handle =
+        tokio::spawn(async move { app_run(&games_sampling_rate, &default_sampling_rate) });
 
     // 等待两个任务完成
-    let _ = file_monitor_handle.await;
-    let _ = run_thread_handle.await;
+    let _ = file_monitor_handle.await?;
+    let _ = run_thread_handle.await?;
+
     Ok(())
 }
 
