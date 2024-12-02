@@ -16,7 +16,9 @@ async fn main() -> Result<()> {
     init_misc();
     let args: Vec<String> = env::args().collect();
     if args.len() < 4 {
-        info!("提供的参数数量小于3，请提供至少3个参数，分别为配置文件路径，游戏APP采样率，日常全局采样率");
+        info!(
+            "提供的参数数量小于3，请提供至少3个参数，分别为配置文件路径，游戏APP采样率，日常全局采样率"
+        );
         return Ok(());
     }
     let profile = args[1].clone();
