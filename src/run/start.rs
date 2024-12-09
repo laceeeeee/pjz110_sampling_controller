@@ -1,7 +1,7 @@
-use crate::GLOBAL_MATCHES;
 use crate::set_sampling_rate;
 use crate::shared::file_monitor::wait_until_update;
 use crate::shared::get_top_app::get_topapp_pid_and_name;
+use crate::GLOBAL_MATCHES;
 use anyhow::Result;
 use log::info;
 use std::path::Path;
