@@ -17,20 +17,20 @@ pub fn get_topapp_pid_and_name() -> Result<(String, String)> {
     let top_index = output.find(" TOP").unwrap_or(0);
     let end_index = output[top_index..].find('/').unwrap_or(output.len());
 
-    if top_index + 13 <= output.len() && top_index + end_index <= output.len() {
-        // let top_app = &output[top_index + 13..top_index + end_index];
-        let top_app = output
-            .get(top_index + 13..top_index + end_index)
-            .unwrap_or("");
-        let mut parts = top_app.split(':');
-        let pid = parts.next().unwrap_or("").trim().to_string();
-        let name = parts.next().unwrap_or("").trim().to_string();
+    // if top_index + 13 <= output.len() && top_index + end_index <= output.len() {
+    // let top_app = &output[top_index + 13..top_index + end_index];
+    let top_app = output
+        .get(top_index + 13..top_index + end_index)
+        .unwrap_or("");
+    let mut parts = top_app.split(':');
+    let pid = parts.next().unwrap_or("").trim().to_string();
+    let name = parts.next().unwrap_or("").trim().to_string();
 
-        return Ok((pid, name));
-    }
+    Ok((pid, name))
+    // }
     // 可以选择返回一个错误、默认值或者处理这种情况的其他方式
     // 息屏时
-    Ok(("".to_string(), "".to_string()))
+    // Ok(("".to_string(), "".to_string()))
 }
 
 /*师范:
