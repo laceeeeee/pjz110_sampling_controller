@@ -5,14 +5,13 @@ pub fn get_topapp_pid_and_name() -> Result<(String, String)> {
     // let output = Command::new("dumpsys")
     // .args(&["activity", "lru"])
     // .output()?;
-    let result = Dumpsys::new("activity").unwrap().dump(&["lru"]);
+    let output = Dumpsys::new("activity").unwrap().dump(&["lru"])?;
     // println!("{:?}", result);
     // if !output.status.success() {
     // return Ok(("".to_string(), "".to_string()));
     // }
 
     // let result = String::from_utf8_lossy(&output.stdout);
-    let output = result?;
     // println!("{}", output);
     let top_index = output.find(" TOP").unwrap_or(0);
     let end_index = output[top_index..].find('/').unwrap_or(output.len());
