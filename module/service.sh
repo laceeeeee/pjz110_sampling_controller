@@ -31,7 +31,13 @@ wait_until_login() {
     until [ -d /sdcard/Android ]; do sleep 1; done
 }
 
+if [ -f $DIR/games.toml ]; then
+    File=$DIR/games.toml
+else
+    File=${0%/*}/games.toml
+fi
+
 wait_until_login
 killall -15 PJZ110_sampling_controller; rm $LOG
 chmod +x ${0%/*}/PJZ110_sampling_controller
-RUST_BACKTRACE=1 nohup $MODDIR/PJZ110_sampling_controller $DIR/games.toml $games_sampling_rate $default_sampling_rate >$LOG 2>&1 &
+RUST_BACKTRACE=1 nohup $MODDIR/PJZ110_sampling_controller $File $games_sampling_rate $default_sampling_rate >$LOG 2>&1 &
