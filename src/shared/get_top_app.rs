@@ -5,7 +5,11 @@ pub fn get_topapp_pid_and_name() -> Result<(String, String)> {
     // let output = Command::new("dumpsys")
     // .args(&["activity", "lru"])
     // .output()?;
-    let output = Dumpsys::new("activity").unwrap().dump(&["lru"])?;
+    let output = Dumpsys::new("activity").unwrap().dump(&["lru"]);
+    if output.is_err() {
+        return Ok(("".to_string(), "".to_string()));
+    }
+    let output = output?;
     // println!("{:?}", result);
     // if !output.status.success() {
     // return Ok(("".to_string(), "".to_string()));
