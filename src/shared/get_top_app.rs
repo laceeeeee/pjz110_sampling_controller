@@ -1,10 +1,25 @@
 // 定义一个函数，执行命令并解析输出
 use anyhow::Result;
 use dumpsys_rs::Dumpsys;
+use inotify::{Inotify, WatchMask};
+use once_cell::sync::Lazy;
+static mut INOTIFY: Lazy<Inotify> = Lazy::new(|| {
+    let inotify = Inotify::init().unwrap();
+    inotify
+        .watches()
+        .add("/dev/input", WatchMask::ACCESS)
+        .unwrap();
+    inotify
+});
+
 pub fn get_topapp_pid_and_name() -> Result<(String, String)> {
     // let output = Command::new("dumpsys")
     // .args(&["activity", "lru"])
     // .output()?;
+    unsafe {
+        INOTIFY.read_events_blocking(&mut [0; 1024]).unwrap();
+    }
+
     let output = Dumpsys::new("activity").unwrap().dump(&["lru"]);
     if output.is_err() {
         return Ok(("".to_string(), "".to_string()));

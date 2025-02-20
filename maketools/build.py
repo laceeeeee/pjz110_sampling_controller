@@ -1,23 +1,8 @@
 #!/bin/python3
-# Copyright 2023 shadow3aaa@gitbub.com
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import os
 import shutil
 from pathlib import Path
 from maketools.toolchains import Buildtools
-from maketools.misc import eprint
 import zipfile
 from datetime import datetime
 
@@ -101,13 +86,11 @@ def task(args):
     try:
         tools = Buildtools()
     except Exception as err:
-        eprint(err)
         exit(-1)
 
     try:
         (check, clean, release, nightly, verbose) = __parse_args(args)
     except Exception as err:
-        eprint(err)
         exit(-1)
 
     if clean:
@@ -139,8 +122,10 @@ def task(args):
     else:
         cargo.arg("build --target aarch64-linux-android")
         if nightly:
-            # cargo.arg("-Z build-std")
             cargo.arg("-Z trim-paths")
+            if release:
+                cargo.arg("-Z build-std")
+            
 
     if release:
         cargo.arg("--release")

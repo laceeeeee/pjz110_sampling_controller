@@ -53,6 +53,6 @@ fn app_run(games_sampling_rate: &str, default_sampling_rate: &str) -> Result<()>
             continue;
         }
         info!("日常app: {}", name);
-        set_sampling_rate(default_sampling_rate);        
+        set_sampling_rate(default_sampling_rate);
     }
 }

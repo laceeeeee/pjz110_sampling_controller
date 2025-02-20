@@ -3,9 +3,6 @@ use anyhow::Result;
 use flexi_logger::{DeferredNow, LogSpecification, Logger, Record};
 use std::io::{self, prelude::*};
 pub fn init_log() -> Result<()> {
-    unsafe {
-        std::env::set_var("RUST_LOG", "info");
-    }
     let logger_spec = LogSpecification::info();
     Logger::with(logger_spec)
         .log_to_stdout()
