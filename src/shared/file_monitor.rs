@@ -16,7 +16,7 @@ pub fn wait_until_update(path: &std::path::Path) -> Result<()> {
     inotify
         .watches()
         .add(parent_path, WatchMask::MODIFY | WatchMask::CLOSE_WRITE)?;
-    info!("Watch added for {:?}", parent_path);
+    info!("Watch added for {parent_path:?}");
     // let path = path.display().to_string();
 
     let path_ref: &str = &path.display().to_string();

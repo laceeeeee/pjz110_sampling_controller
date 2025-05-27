@@ -39,14 +39,11 @@ async fn main() -> Result<()> {
 }
 
 fn print_app_list(games_sampling_rate: &str, default_sampling_rate: &str) {
-    info!(
-        "进入游戏的采样率:{} 全局默认采样率:{}",
-        games_sampling_rate, default_sampling_rate
-    );
+    info!("进入游戏的采样率:{games_sampling_rate} 全局默认采样率:{default_sampling_rate}");
     let global_matches = GLOBAL_MATCHES.lock();
     info!("以下是你在fas-rs的games.toml配置的包名:");
     for match_str in global_matches.iter() {
-        info!("{}", match_str);
+        info!("{match_str}");
     }
 }
 

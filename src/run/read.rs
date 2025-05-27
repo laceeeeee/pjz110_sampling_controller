@@ -7,7 +7,7 @@ pub fn read_profile(file: &str) -> Result<()> {
     // let config_str = fs::read_to_string(file)?;
     // let re = Regex::new(r#""(.*?)""#)?;
     let config_str =
-        fs::read_to_string(file).with_context(|| format!("Failed to read file: {}", file))?;
+        fs::read_to_string(file).with_context(|| format!("Failed to read file: {file}"))?;
     let re = Regex::new(r#""(.*?)""#).with_context(|| "Failed to compile regex")?;
 
     // let re = Regex::new(r#""([^"]*)""#)?;
