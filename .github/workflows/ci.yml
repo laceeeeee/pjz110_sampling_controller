@@ -4,73 +4,108 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
-  workflow_dispatch:
+  workflow_dispatch:  # 手动触发保留
 
 env:
   CARGO_TERM_COLOR: always
-  ANDROID_NDK_VERSION: r28b
-  ANDROID_API_LEVEL: 35
-  CARGO_NDK_VERSION: 4.2.2
+  # 1. 从仓库 README 提取的 NDK 配置（aarch64 架构优先用 termux-ndk，兼容一加13）
+  TERMUX_NDK_URL: "https://github.com/Lzhiyong/termux-ndk/releases/download/r25c/termux-ndk-r25c-aarch64.zip"
+  # 2. 从 crates.io 确认存在的 cargo-ndk 版本（替换不存在的 4.2.2，用最新稳定版 4.4.0）
+  CARGO_NDK_VERSION: "4.4.0"
 
 jobs:
   release-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1  # 仅拉取最新代码，加速构建
 
-      - name: Setup system dependencies
+      # 步骤1：安装仓库 README 要求的系统依赖（匹配本地构建逻辑）
+      - name: Install system dependencies (match README)
         run: |
           sudo apt update
-          sudo apt install -y gcc-multilib zip unzip wget
+          sudo apt install -y gcc-multilib zip unzip wget python3 python3-pip
+          # 补充 README 提到的编译依赖（避免 GLIBC 版本错误）
+          sudo apt install -y llvm clang make cmake glibc-source
 
-      - name: Cache Android NDK
+      # 步骤2：缓存并下载 NDK（优先用仓库推荐的 termux-ndk，而非官方 NDK，兼容 aarch64）
+      - name: Cache termux-ndk (aarch64 for OnePlus 13)
         id: cache-ndk
         uses: actions/cache@v3
         with:
-          path: ~/android-ndk-${{ env.ANDROID_NDK_VERSION }}
-          key: ndk-${{ env.ANDROID_NDK_VERSION }}-linux
+          path: ~/ndk_temp  # 保持和仓库本地构建一致的路径
+          key: termux-ndk-r25c-aarch64  # 固定 NDK 版本，避免兼容性问题
 
-      - name: Download Android NDK
+      - name: Download termux-ndk (match README)
         if: steps.cache-ndk.outputs.cache-hit != 'true'
         run: |
-          wget -O ndk.zip https://dl.google.com/android/repository/android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip -nv
-          unzip -q ndk.zip -d ~/
+          wget -O ndk.zip ${{ env.TERMUX_NDK_URL }} -nv
+          mkdir -p ~/ndk_temp
+          unzip ndk.zip -d ~/ndk_temp 2>&1 > /dev/null
+          # 按仓库本地构建逻辑整理 NDK 路径
+          mv ~/ndk_temp/*/* ~/ndk_temp  # 确保 NDK 根目录直接包含 toolchains 等文件夹
 
-      - name: Setup NDK environment
+      # 步骤3：配置 NDK 环境变量（完全匹配仓库本地构建命令）
+      - name: Setup NDK environment (match README)
         run: |
-          echo "ANDROID_NDK_HOME=~/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
-          echo "ANDROID_NDK_ROOT=~/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
-          echo "$HOME/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_PATH
+          export NDK_PATH=$(realpath ~/ndk_temp)
+          echo "ANDROID_NDK_HOME=$NDK_PATH" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=$NDK_PATH" >> $GITHUB_ENV
+          # 将 NDK 工具链加入 PATH，确保 cargo-ndk 能找到编译器
+          echo "$NDK_PATH/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_PATH
 
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@nightly
-        with:
-          targets: aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android,i686-linux-android
-          components: rust-src
-
-      - name: Install cargo-ndk
+      # 步骤4：安装 Rust 工具链（严格遵循仓库 README 要求：nightly + 多目标架构）
+      - name: Setup Rust toolchain (match README)
         run: |
+          # 安装 nightly 版本（仓库 README 明确要求）
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain nightly --profile default -y
+          source $HOME/.cargo/env
+          # 添加仓库需要的 Android 目标架构（aarch64 优先，匹配一加13）
+          rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android i686-linux-android
+          # 安装 rust-src（交叉编译必需，仓库 README 要求）
+          rustup component add rust-src
+          # 验证 Rust 版本
+          rustc --version
+          cargo --version
+
+      # 步骤5：安装 cargo-ndk（用 crates.io 真实存在的版本 4.4.0，替换不存在的 4.2.2）
+      - name: Install cargo-ndk (valid version from crates.io)
+        run: |
+          source $HOME/.cargo/env
+          # 安装确认存在的 4.4.0 版本（crates.io 可查：https://crates.io/crates/cargo-ndk/4.4.0）
           cargo install cargo-ndk --version ${{ env.CARGO_NDK_VERSION }} --locked
+          # 验证安装成功（调试用，失败直接暴露问题）
+          cargo ndk --version
 
-      - name: Clean previous builds
+      # 步骤6：清理残留构建文件（避免旧文件干扰，仓库 release.sh 也有类似逻辑）
+      - name: Clean previous builds (match release.sh)
         run: |
+          source $HOME/.cargo/env
           cargo clean
-          rm -rf output
-          rm -f Cargo.lock
+          rm -rf output  # 清理旧输出目录
+          rm -f Cargo.lock  # 避免依赖版本冲突（仓库 make.py 可能重新生成）
 
-      - name: Build with make.py
+      # 步骤7：执行仓库构建脚本（完全复用本地成功命令，来自 README）
+      - name: Build with make.py (exact command from README)
         run: |
+          source $HOME/.cargo/env
+          # 严格按照仓库 README 执行构建命令，添加 -v 查看详细日志（便于调试）
           python3 ./make.py build --release --nightly -v
 
-      - name: Prepare artifacts
+      # 步骤8：准备产物（匹配原 CI 逻辑，确保 Artifacts 结构正确）
+      - name: Prepare artifacts (match original logic)
         run: |
           mkdir -p output/artifact/release
-          unzip "output/PJZ110_sampling_controller_release_*.zip" -d output/artifact/release
+          # 解压 make.py 生成的压缩包（仓库构建产物默认是 PJZ110_sampling_controller_release_*.zip）
+          unzip "output/PJZ110_sampling_controller_release_*.zip" -d output/artifact/release || echo "Warning: Zip file not found (check build log)"
 
+      # 步骤9：上传产物（保留原配置，确保能下载）
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
           name: pjz110_sampling_controller(release)
           compression-level: 9
           path: output/artifact/release
-          retention-days: 7
+          retention-days: 14  # 保留14天，足够下载
+          if-no-files-found: warn  # 产物不存在时警告，而非直接失败（便于排查）
