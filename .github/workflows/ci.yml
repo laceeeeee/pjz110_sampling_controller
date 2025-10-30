@@ -33,7 +33,7 @@ jobs:
 
       # 改动2：安装最新版cargo-ndk（支持API 35），避免默认安装旧版本
       - name: Install cargo ndk
-        run: cargo install cargo-ndk --version 4.3.0  # 4.3.0及以上支持API 35
+        run: cargo install cargo-ndk
 
       - name: Other deps
         run: |
