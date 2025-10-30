@@ -4,58 +4,73 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
-  workflow_dispatch:  # 手动触发保留
+  workflow_dispatch:
+
 env:
   CARGO_TERM_COLOR: always
+  ANDROID_NDK_VERSION: r28b
+  ANDROID_API_LEVEL: 35
+  CARGO_NDK_VERSION: 4.2.2
+
 jobs:
   release-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      # 改动1：指定支持API 35的NDK版本（如r28b），而非拉取最新版（避免兼容性问题）
-      - name: Setup ndk
-        run: |
-          # 直接下载支持API 35的NDK r28b（稳定版，兼容cargo-ndk最新版）
-          ndk_url="https://dl.google.com/android/repository/android-ndk-r28b-linux.zip"
-          wget -O ndk.zip $ndk_url -nv
-          mkdir ~/ndk_temp
-          unzip ndk.zip -d ~/ndk_temp 2>&1 > /dev/null
-          # 修复NDK解压后的路径（确保ANDROID_NDK_HOME指向正确目录）
-          mv ~/ndk_temp/android-ndk-r28b/* ~/ndk_temp/
-
-      - name: Setup rust toolchains
-        run: |
-          rustup default nightly
-          rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android i686-linux-android
-          rustup component add rust-src
-          rustup update
-
-      # 改动2：安装最新版cargo-ndk（支持API 35），避免默认安装旧版本
-      - name: Install cargo ndk
-        run: cargo install cargo-ndk --version 4.2.2 --locked
-
-      - name: Other deps
+      - name: Setup system dependencies
         run: |
           sudo apt update
-          sudo apt install gcc-multilib
+          sudo apt install -y gcc-multilib zip unzip wget
 
-      - name: Build
+      - name: Cache Android NDK
+        id: cache-ndk
+        uses: actions/cache@v3
+        with:
+          path: ~/android-ndk-${{ env.ANDROID_NDK_VERSION }}
+          key: ndk-${{ env.ANDROID_NDK_VERSION }}-linux
+
+      - name: Download Android NDK
+        if: steps.cache-ndk.outputs.cache-hit != 'true'
         run: |
-          export ANDROID_NDK_HOME=$(realpath ~/ndk_temp)
-          export ANDROID_NDK_ROOT=$ANDROID_NDK_HOME
-          export RUSTFLAGS="-C default-linker-libraries"
-          rm -rf .cargo Cargo.lock
-          python3 ./make.py build --release --nightly
+          wget -O ndk.zip https://dl.google.com/android/repository/android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip -nv
+          unzip -q ndk.zip -d ~/
+
+      - name: Setup NDK environment
+        run: |
+          echo "ANDROID_NDK_HOME=~/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=~/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
+          echo "$HOME/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_PATH
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android,i686-linux-android
+          components: rust-src
+
+      - name: Install cargo-ndk
+        run: |
+          cargo install cargo-ndk --version ${{ env.CARGO_NDK_VERSION }} --locked
+
+      - name: Clean previous builds
+        run: |
+          cargo clean
+          rm -rf output
+          rm -f Cargo.lock
+
+      - name: Build with make.py
+        run: |
+          python3 ./make.py build --release --nightly -v
 
       - name: Prepare artifacts
         run: |
           mkdir -p output/artifact/release
           unzip "output/PJZ110_sampling_controller_release_*.zip" -d output/artifact/release
 
-      - name: Upload release version
+      - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
           name: pjz110_sampling_controller(release)
           compression-level: 9
           path: output/artifact/release
+          retention-days: 7
